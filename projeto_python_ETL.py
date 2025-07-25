@@ -1,20 +1,20 @@
 import pandas as pd                  # Biblioteca para ler e manipular dados (como arquivos CSV)
 import oracledb                      # Biblioteca para conectar e interagir com o banco Oracle
 
-df = pd.read_csv("novos_funcionarios.csv")  # Lê o arquivo CSV e armazena em um DataFrame
+df = pd.read_csv("novos_funcionarios.csv")  # Lê o arquivo CSV e armazena em um DataFrame (tabela em memória)
 
 # VALIDAÇÃO – Remove linhas com dados obrigatórios ausentes
-colunas_obrigatorias = ["id", "nome", "salario", "setor"]  # Define as colunas obrigatórias
-df = df.dropna(subset=colunas_obrigatorias)                # Remove linhas com dados ausentes nessas colunas
+colunas_obrigatorias = ["id", "nome", "salario", "setor"]
+df = df.dropna(subset=colunas_obrigatorias)
 
-# Converte o ID para inteiro (garante que seja número e remove espaços)
-df["id"] = df["id"].astype(str).str.strip().astype(int)
+# TRANSFORMAÇÃO
+# Remover espaços extras e capitalizar nomes (ex: "  maria silva  " → "Maria Silva")
+df["nome"] = df["nome"].str.strip().str.title()
 
-# TRANSFORMAÇÃO – Tratamento dos dados
-df["nome"] = df["nome"].str.strip().str.title()    # Remove espaços e capitaliza os nomes (ex: maria silva → Maria Silva)
-
-df["setor"] = df["setor"].str.upper()              # Converte o setor para caixa alta (ex: rh → RH)
-df["setor"] = df["setor"].replace({                # Padroniza nomes diferentes para o mesmo setor
+# Padronizar setor para caixa alta e renomear algumas variações para "RH"
+df["nome"] = df["nome"].str.strip().str.title()
+df["setor"] = df["setor"].str.upper()
+df["setor"] = df["setor"].replace({
     "RECURSOS HUMANOS": "RH",
     "R.H.": "RH"
 })
