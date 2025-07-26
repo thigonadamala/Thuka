@@ -8,5 +8,11 @@ conn = oracledb.connect(
 )
 cursor = conn.cursor()
 
-cursor.execute("SELECT COUNT(*) FROM funcionarios")
-print(cursor.fetchone())
+df = pd.read_csv("novos_funcionarios_docker.csv")
+
+colunas_obrigatorias = ["id", "nome", "idade", "cidade", "salario", "setor"]
+df = df.dropna(subset=colunas_obrigatorias)
+
+data = [tuple(x) for x in df.to_numpy()]
+
+print(df)
